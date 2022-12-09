@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 require('dotenv').config("/config/config.env");
 const { connect } = require("../config/database");
 const SignUp = require("../models/signUp");
+const Story = require("../models/storyUpload");
 const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt");
@@ -280,7 +281,7 @@ module.exports.resetPassword = async (req, res) => {
     res.status(400).send({
       message: "Enter valid Email address",
       status: 400,
-      data: e
+      data: e,
     })
   }
 }
@@ -531,7 +532,7 @@ module.exports.otpSend = async (req, res) => {
             </div>
           </body>
         </html>  `
-        
+
 
     };
 
@@ -548,77 +549,101 @@ module.exports.otpSend = async (req, res) => {
       status: 400,
       data: "error"
     })
-  } 
+  }
 }
 // ----------------------------------------------------
 
-const Post=require("../models/post")
+const Post = require("../models/post")
 
 
 
-module.exports.userPostData=async(req,res)=>{
-   try{
-    console.log(req.params.id,"-----------------.id");
+
+module.exports.userPostData = async (req, res) => {
+  try {
+    console.log(req.params.id, "-----------------.id");
     console.log(req.files);
     if (req.files.profile) {
-      // console.log(req.files);
+      console.log(req.files);
       let oldName = "uploads/" + req.files.profile[0].filename;
       let filePath = "uploads/" + req.files.profile[0].filename + req.files.profile[0].originalname;
       fs.rename(oldName, filePath, () => {
       });
       var filePathMove = 'uploads/' + req.files.profile[0].filename + req.files.profile[0].originalname;
-      // console.log("success!" + filePathMove)
+      console.log("success!---------------------------" + filePathMove)
     } else {
-      var filePathMove = req.user.profile;
-
-    }
-    if (req.files.profilePic) {
-      // console.log(req.files);
-      let oldName = "uploads/" + req.files.profilePic[0].filename;
-      let filePath = "uploads/" + req.files.profilePic[0].filename + req.files.profilePic[0].originalname;
-      fs.rename(oldName, filePath, () => {
-      });
-      var filePathMove2 = 'uploads/' + req.files.profilePic[0].filename + req.files.profilePic[0].originalname;
-      // console.log("success!" + filePathMove)
-    } else {
-      var filePathMove2 = req.user.profilePic;
-
+      var filePathMove = req.files.profile;
     }
 
-//     console.log(req.files.profile[0].path);
-//     console.log(req.files.profilePic[0].path);
-// console.log(filePathMove2);
+
+
+    //     console.log(req.files.profile[0].path);
+    //     console.log(req.files.profilePic[0].path);
+    // console.log(filePathMove2);
+
+
+
+    console.log(req._id, '*---------------req.user._id ')
+    const userData = await SignUp.findById(req.params.id);
+    console.log(userData);
+
+    var digits = parseInt((Math.random() * 900000563146840) + 10054691000);
+    console.log(digits);
+
 
     const userPost = new Post({
-      username:req.body.username,
-      caption:req.body.caption,
-      location:req.body.location,
-      like:req.body.like,
-      comment:req.body.comment,
-      share:req.body.share,
-      userPost:filePathMove,
-      profilePic:filePathMove2,
-      userId:req.params.id,
-    
-    });
-await userPost.save();
-    
+      username: req.body.username,
+      caption: req.body.caption,
+      location: req.body.location,
+      hashTag: req.body.hashTag,
+      like: req.body.like,
+      comment: req.body.comment,
+      share: req.body.share,
+      userPost: filePathMove,
+      userId: req.params.id,
+
+    }); 
+    await userPost.save(); 
+
     res.send(userPost);
-   }catch(e){
+  } catch (e) {
     res.send(e);
     console.log(e);
-   }
+  }
+}
+const Comment = require("../models/comment")
+
+module.exports.userComment = async (req, res) => {
+  //   console.log(req.params.id);
+  // const id=req.params.id;
+
+  try {
+
+    console.log(req.body);
+    const userComment = new Comment({
+      userId: req.params.id,
+      comment: req.body.comment,
+
+      postId: req.body.postId,
+      // profilePic:profilePic.profile,
+      // username:profilePic.name,
+
+    })
+    await userComment.save();
+    res.send(userComment)
+  } catch (e) {
+  }
 }
 
-module.exports.getPostData=async(req,res)=>{
-  console.log( req.params.id);
-  try{
-    
-    const postData=await Post.findOne({userId:req.params.id})
 
-    res.send(postData)
-  }catch(e){
-res.send(e);
+module.exports.getComment = async (req, res) => {
+  try {
+
+    const getComments = await Comment.find({ postId: req.params.id });
+
+    res.send(getComments);
+
+  } catch (e) {
+
   }
 }
 
@@ -628,9 +653,106 @@ res.send(e);
 
 
 
+module.exports.getPostData = async (req, res) => {
+  console.log(req.params.id);
 
 
+  try {
 
+    const postData = await Post.find({ userId: req.params.id })
+
+    res.send(postData)
+  } catch (e) {
+    res.send(e);
+  }
+}
+
+
+module.exports.storyUpload = async (req, res) => {
+  try {
+    console.log(req.body);
+    console.log(req.params.id, "-----------------.id");
+    console.log(req.files);
+    if (req.files.story) {
+      // console.log(req.files);
+      let oldName = "uploads/" + req.files.story[0].filename;
+      let filePath = "uploads/" + req.files.story[0].filename + req.files.story[0].originalname;
+      fs.rename(oldName, filePath, () => {
+      });
+      var filePathMove = 'uploads/' + req.files.story[0].filename + req.files.story[0].originalname;
+      // console.log("success!" + filePathMove)
+    } else {
+      var filePathMove = req.user.story;
+    }
+    // console.log(filePathMove,"==============================");
+    const story = new Story({
+      story: filePathMove,
+      userId: req.params.id,
+    })
+    await story.save();
+    res.status(200).send({
+      status: 200,
+      data: story,
+    });
+  } catch (e) {
+    res.send({
+      status:400,
+      data:"enter correct data"
+    })
+  }
+}
+
+
+module.exports.storyGet=async(req,res)=>{
+try{
+  const getData=await Story.find({userId:req.params.id})
+  const userData=await SignUp.find({_id:req.params.id})
+  // console.log(getData);
+  console.log(userData);
+  res.send({
+    status:200,
+    data:getData,
+    userProfilePic:userData[0].profile,
+    username:userData[0].name,
+  })
+}catch(e){
+
+}
+}
+
+const Google=require("../models/google");
+
+
+module.exports.google=async(req,res)=>{
+  try{
+    const token=req.body.token;
+    const google=new Google({
+      token:token,
+    });
+    await google.save() 
+    res.status(200).send({
+      status:200,
+      data:'error'
+    })
+  }catch(e){
+    res.status(400).send({
+      status:400,
+      data:'error'
+    })
+  }
+
+
+;}
+
+module.exports.storyGetAll=async(req,res)=>{
+  try{
+      const storyGet=await Story.find();
+      console.log(storyGet);
+      res.send(storyGet)
+  }catch(e){
+
+  }
+}
 
 
 

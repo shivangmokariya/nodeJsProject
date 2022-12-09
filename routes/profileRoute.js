@@ -14,6 +14,7 @@ const profileData = require("../controllers/userController")
 const getProfileData = require("../controllers/userController")
 const updateProfile = require("../controllers/userController")
 
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());

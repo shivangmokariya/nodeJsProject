@@ -14,6 +14,8 @@ const otpRoutes=require("./routes/otpRoutes")
 const resetPasswordRoutes=require("./routes/resetPassRoutes")
 const profileRoutes=require("./routes/profileRoute")
 const postRoutes=require("./routes/postRoutes")
+const googleAuthRoute=require("./routes/googleAuthroute")
+const storyRoutes=require("./routes/storyRoutes")
 const session = require('express-session'); 
 
 // uses
@@ -22,12 +24,14 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Routes API 
-app.use("/signUp",SignupRoutes); 
-app.use("/login",loginRoutes);  
+app.use("/signUp",SignupRoutes);
+app.use("/login",loginRoutes);
 app.use("/send-email",otpRoutes);
 app.use("/reset-password",resetPasswordRoutes);
 app.use("/profile",profileRoutes);
-app.use("/user-post",postRoutes);
+app.use("/userpost",postRoutes);
+app.use("/google",googleAuthRoute);
+app.use("/story",storyRoutes);
 
 
 // Server 
@@ -37,4 +41,4 @@ app.listen(process.env.PORT, () => {
 })
 
 
- 
+//  living with tanya ,lasic surgury

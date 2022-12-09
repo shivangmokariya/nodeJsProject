@@ -3,12 +3,15 @@ const mongoose=require("mongoose");
 const PostSchema=new mongoose.Schema({
   username:{
     type:String,
-    required:true,
+    required:false,
   },
   caption:{
     type:String
     
-  },profilePic:{
+  },post:{
+    type:String
+  },
+  postId:{
     type:String
   },
   userPost:{
@@ -20,15 +23,15 @@ const PostSchema=new mongoose.Schema({
   location:{
     type:String
   },
-  like:[{
-    type:Number,
-  }],
-  comment:[{
+  like:{
     type:String,
-  }],
-  share:[{
-    type:Number,
-  }],
+  },
+  comment:{
+    type:String,
+  },
+  share:{
+    type:String,
+  },
   userId:{
     type:String
   }
