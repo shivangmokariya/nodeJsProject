@@ -23,16 +23,16 @@ module.exports.registration = async (req, res) => {
   try {
     const useremail = await SignUp.findOne({ email: req.body.email });
     if (useremail) {
-      res.status(100).send({
-        message: "email already exits.",
-        status: 100,
-      });
-    }
-    console.log(req.body);
-    const user = new SignUp(req.body)
+      res.send({
+        status:100,
+        message:"email already exists."
+      })
+    }else{
+    // console.log(req.body);
+    const user = new SignUp(req.body);
 
     console.log(req.body);
-
+ 
     const token = await user.generateAuthToken();
 
     res.status(200).send({
@@ -43,7 +43,7 @@ module.exports.registration = async (req, res) => {
     });
     console.log(user);
     await user.save();
-
+  }
 
   } catch (e) {
     console.log('error', e);
@@ -134,13 +134,22 @@ module.exports.profileData = async (req, res) => {
 
 module.exports.getProfileData = async (req, res) => {
   try {
-    console.log(req._id, '*---------------req.user._id ')
+    // console.log(req._id, '*---------------req.user._id ')
     const userData = await SignUp.findById(req._id);
     res.send(userData);
   } catch (e) {
     res.send("error - ", e)
   }
 };
+
+module.exports.getProfileDataById=async (req,res)=>{
+  try{
+const getProfile=await SignUp.findById(req.params.id)
+res.send(getProfile)
+  }catch(e){
+    res.send("error - ", e)
+  }
+}
 
 module.exports.checkUser = async (decoded, result) => {
   // console.log('RAJ decoded._id KANANI: --' + decoded._id);
@@ -165,30 +174,40 @@ module.exports.updatedData = async (req, res) => {
       // console.log("success!" + filePathMove)
     } else {
       var filePathMove = req.user.profile;
-
+      
     }
     console.log(req._id);
-    const updatedData = await SignUp.updateOne({ _id: req._id }, {
+    const updatedData = await SignUp.findByIdAndUpdate({ _id: req._id, }, { 
       $set: {
         name: req.body.name,
         phone_no: req.body.phone_no,
         bio: req.body.bio,
         profile: filePathMove
       }
-    })
+    },{new:true})
+
     // await userProfile.save();
     console.log(req.body.name);
     var data = req.body
     data.files = filePathMove
+    if(!req.files.profile){
+      res.status(200).send({
+        status:200,
+        message: "Profile pic not saved.",
+        data: updatedData
+      })
+    }else{
     res.status(200).send({
+      status:200,
       message: "Profile saved successfully.",
       data: updatedData
     })
+  }
     // res.send({message: "File Saved",files: filePathMove});
 
   } catch (e) {
     console.log(e);
-    res.status(400).send({ message: "data not saved correctly--", e: e });
+    res.status(400).send({ status:200,message: "data not saved correctly--", e: e });
   }
 }
 // ---------------------------------------------------------
@@ -582,12 +601,12 @@ module.exports.userPostData = async (req, res) => {
 
 
 
-    console.log(req._id, '*---------------req.user._id ')
+    // console.log(req._id, '*---------------req.user._id ')
     const userData = await SignUp.findById(req.params.id);
     console.log(userData);
 
-    var digits = parseInt((Math.random() * 900000563146840) + 10054691000);
-    console.log(digits);
+    // var digits = parseInt((Math.random() * 900000563146840) + 10054691000);
+    // console.log(digits);
 
 
     const userPost = new Post({
@@ -604,9 +623,15 @@ module.exports.userPostData = async (req, res) => {
     }); 
     await userPost.save(); 
 
-    res.send(userPost);
+    res.status(200).send({
+      status:200,
+      userPost:userPost,
+    });
   } catch (e) {
-    res.send(e);
+    res.status(400).send({
+      status:400,
+      error:  e
+    });
     console.log(e);
   }
 }
@@ -628,6 +653,7 @@ module.exports.userComment = async (req, res) => {
       // username:profilePic.name,
 
     })
+    
     await userComment.save();
     res.send(userComment)
   } catch (e) {
@@ -637,31 +663,118 @@ module.exports.userComment = async (req, res) => {
 
 module.exports.getComment = async (req, res) => {
   try {
+  var getComments = await Comment.find({ postId: req.params.id });
+    var data = []
+    console.log(getComments);
+    for (let index = 0; index < getComments.length; index++) {
+      data = []
+      data = await SignUp.findById({_id: getComments[index].userId})
+      getComments[index].username = data.name;
+      getComments[index].userProfile = data.profile;
+      // console.log("yughdfu",data.profile);
+  }
 
-    const getComments = await Comment.find({ postId: req.params.id });
-
+    // const getComments = await Comment.find({ postId: req.params.id });
+    await getComments.reverse();
+    console.log(getComments.length);
     res.send(getComments);
 
   } catch (e) {
 
+  } 
+}
+
+module.exports.likeUpdate=async (req,res)=>{
+  // console.log(req.user._id);
+  const checkLike=await Post.find({_id:req.params.id},{like:req.user._id})
+  // console.log(checkLike,"--------fffffffffffffhjhjhjhjhjhjhjhj");
+  console.log(req.user);
+  const likesData=await Post.findByIdAndUpdate(req.params.id,{
+ 
+    $push:{like:req.user._id}
+  },{
+    new:true
+  })
+    if(!likesData){ 
+      return res.status(400).json({error:"err"})
+    }else{ 
+      res.status(200).json(likesData);
+    }
+
+}
+module.exports.unlikeUpdate=async (req,res)=>{
+ const likesData= await Post.findByIdAndUpdate(req.params.id,{
+    $pull:{like:req.user._id}
+  },{
+    new:true
+  })
+    if(!likesData){
+      return res.status(400).json({error:"error"})
+    }else{
+      res.status(200).json(likesData);
+    }
+}
+
+module.exports.deletePost=async (req,res)=>{
+  try{
+    const deletedData=await Post.deleteOne({_id:req.params.id})
+    res.send(deletedData);
+  }catch(e){
+res.send(e,"error")
   }
+
 }
 
 
+module.exports.getPostDataAll=async(req,res)=>{
+  try{
+    // console.log("booooooooo,");
+    // const userDetails= await SignUp.find();
+    var postData = await Post.find();
+    var data = []
+    var comment = []
+// console.log(userDetails);
+try{
+for (let index = 0; index < postData.length; index++) {
+    data = []
+    data = await SignUp.findById({_id: postData[index].userId})
+    comment = await Comment.find({postId: postData[index]._id})
+    postData[index].username = data.name;
+    postData[index].userProfile = data.profile;
+    postData[index].userBio = data.bio;
+    postData[index].comment = comment.length;
+}
 
+const response = await res.send({
+  postData:postData.reverse(),
+})
+}
+catch(e){
+  res.send({
+    error:e,
+  })
+}
+    
+  }catch(e){
+    
+  }
+}
 
-
-
+ 
 
 module.exports.getPostData = async (req, res) => {
   console.log(req.params.id);
 
 
   try {
-
-    const postData = await Post.find({ userId: req.params.id })
-
-    res.send(postData)
+    const userDetails= await SignUp.findOne({_id: req.params.id});
+    const postData = await Post.find({ userId: req.params.id });
+    console.log(userDetails.profile);
+    res.send({
+      status:200,
+      postData:postData,
+      userProfilePic:userDetails.profile,
+    })
   } catch (e) {
     res.send(e);
   }
@@ -684,7 +797,7 @@ module.exports.storyUpload = async (req, res) => {
     } else {
       var filePathMove = req.user.story;
     }
-    // console.log(filePathMove,"==============================");
+    // console.log(filePathMove,"======================");
     const story = new Story({
       story: filePathMove,
       userId: req.params.id,
@@ -729,7 +842,7 @@ module.exports.google=async(req,res)=>{
     const google=new Google({
       token:token,
     });
-    await google.save() 
+    await google.save()
     res.status(200).send({
       status:200,
       data:'error'
@@ -753,7 +866,6 @@ module.exports.storyGetAll=async(req,res)=>{
 
   }
 }
-
 
 
 

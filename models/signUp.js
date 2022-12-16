@@ -16,6 +16,10 @@ const registerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phone_no:{
+    type:String,
+    required:false,
+  },
   profile: {
     type: String,
     required: false,
@@ -28,14 +32,18 @@ const registerSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  comment: {
+    type: String,
+    required: false,
+  },
   tokens:[{
     token:{
-        type:String,
+        type:String, 
         required:true
     }
 }]
 });
-
+  
 registerSchema.methods.generateAuthToken = async function () {
   try {
     token = jwt.sign({ _id: this._id.toString() }, process.env.SECRET_KEY);

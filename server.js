@@ -5,8 +5,11 @@ const express = require("express");
 const app = express();
 const cors = require('cors');
 const bodyParser = require("body-parser");
+const multer=require("multer")
  
-
+const upload = multer({ dest: "uploads/" });
+app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 // Require 
 const SignupRoutes=require("./routes/signupRoutes")
 const loginRoutes=require("./routes/loginRoutes")
@@ -23,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-// Routes API 
+// Routes API
 app.use("/signUp",SignupRoutes);
 app.use("/login",loginRoutes);
 app.use("/send-email",otpRoutes);

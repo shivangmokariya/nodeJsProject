@@ -5,6 +5,14 @@ const PostSchema=new mongoose.Schema({
     type:String,
     required:false,
   },
+  userProfile:{
+    type:String,
+    required:false,
+  },
+  userBio:{
+    type:String,
+    required:false,
+  },
   caption:{
     type:String
     
@@ -23,9 +31,11 @@ const PostSchema=new mongoose.Schema({
   location:{
     type:String
   },
-  like:{
+  like:[{
     type:String,
-  },
+    unique:true,
+    
+  }],
   comment:{
     type:String,
   },

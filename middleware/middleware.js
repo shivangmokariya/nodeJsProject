@@ -15,7 +15,7 @@ const authenticate = (req, res, next) => {
           // console.log('response: ' + JSON.stringify(response))
           if (!err && response != null) {
             req._id = decoded._id;
-            req.user = response; 
+            req.user = response;
             return next();
           } else {
             return res.status(401).send({ error: 'Unauthorized', message: 'Authentication failed (token 3).' });
@@ -31,3 +31,17 @@ const authenticate = (req, res, next) => {
   return res.status(401).send({ error: 'Unauthorized 1', message: 'Authentication failed (token).' });
 }
 module.exports = authenticate;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

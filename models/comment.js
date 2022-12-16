@@ -4,6 +4,12 @@ const CommentSchema=new mongoose.Schema({
   comment:{
     type:String,
   },
+  userProfile:{
+    type:String,
+  },
+  username:{
+    type:String,
+  },
   userId:{
     type:String
   },
