@@ -31,7 +31,7 @@ module.exports.registration = async (req, res) => {
     // console.log(req.body);
     const user = new SignUp(req.body);
 
-    console.log(req.body);
+    // console.log(req.body);
  
     const token = await user.generateAuthToken();
 
@@ -41,12 +41,12 @@ module.exports.registration = async (req, res) => {
       data: user,
       token: token
     });
-    console.log(user);
+    // console.log(user);
     await user.save();
   }
 
   } catch (e) {
-    console.log('error', e);
+    // console.log('error', e);
     res.status(400).send({
       message: "user not reqisterd.",
       status: 400,
@@ -83,7 +83,7 @@ module.exports.profileData = async (req, res) => {
     // console.log("file profile --------- ",req.files.profile);
 
     // console.log("bodddyyyyyyyyyyyyyyyyyyy",req.body);
-    console.log(req.files.profile);
+    // console.log(req.files.profile);
     if (req.files.profile) {
 
 
@@ -120,14 +120,14 @@ module.exports.profileData = async (req, res) => {
         files: ""
       });
       await userProfile.save();
-      console.log(data)
+      // console.log(data)
       res.status(200).send({
         message: "Profile saved successfully",
         data: data
       });
     }
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     res.status(400).send({ message: "data not saved correctly", e: e });
   }
 }
@@ -165,7 +165,7 @@ module.exports.updatedData = async (req, res) => {
   try {
 
     if (req.files.profile) {
-      console.log(req.files);
+      // console.log(req.files);
       let oldName = "uploads/" + req.files.profile[0].filename;
       let filePath = "uploads/" + req.files.profile[0].filename + req.files.profile[0].originalname;
       fs.rename(oldName, filePath, () => {
@@ -176,7 +176,7 @@ module.exports.updatedData = async (req, res) => {
       var filePathMove = req.user.profile;
       
     }
-    console.log(req._id);
+    // console.log(req._id);
     const updatedData = await SignUp.findByIdAndUpdate({ _id: req._id, }, { 
       $set: {
         name: req.body.name,
@@ -187,7 +187,7 @@ module.exports.updatedData = async (req, res) => {
     },{new:true})
 
     // await userProfile.save();
-    console.log(req.body.name);
+    // console.log(req.body.name);
     var data = req.body
     data.files = filePathMove
     if(!req.files.profile){
@@ -206,7 +206,7 @@ module.exports.updatedData = async (req, res) => {
     // res.send({message: "File Saved",files: filePathMove});
 
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     res.status(400).send({ status:200,message: "data not saved correctly--", e: e });
   }
 }
@@ -215,7 +215,7 @@ module.exports.login = async (req, res) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
-    console.log(email);
+    // console.log(email);
     const useremail = await SignUp.findOne({ email: email });
     const hPassword = await bcrypt.compare(password, useremail.password);
 
@@ -557,9 +557,9 @@ module.exports.otpSend = async (req, res) => {
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
-        console.log('Email sent: ' + info.response);
+        // console.log('Email sent: ' + info.response);
       }
     });
   } else {
@@ -579,16 +579,16 @@ const Post = require("../models/post")
 
 module.exports.userPostData = async (req, res) => {
   try {
-    console.log(req.params.id, "-----------------.id");
-    console.log(req.files);
+    // console.log(req.params.id, "-----------------.id");
+    // console.log(req.files);
     if (req.files.profile) {
-      console.log(req.files);
+      // console.log(req.files);
       let oldName = "uploads/" + req.files.profile[0].filename;
       let filePath = "uploads/" + req.files.profile[0].filename + req.files.profile[0].originalname;
       fs.rename(oldName, filePath, () => {
       });
       var filePathMove = 'uploads/' + req.files.profile[0].filename + req.files.profile[0].originalname;
-      console.log("success!---------------------------" + filePathMove)
+      // console.log("success!---------------------------" + filePathMove)
     } else {
       var filePathMove = req.files.profile;
     }
@@ -603,7 +603,7 @@ module.exports.userPostData = async (req, res) => {
 
     // console.log(req._id, '*---------------req.user._id ')
     const userData = await SignUp.findById(req.params.id);
-    console.log(userData);
+    // console.log(userData);
 
     // var digits = parseInt((Math.random() * 900000563146840) + 10054691000);
     // console.log(digits);
@@ -632,7 +632,7 @@ module.exports.userPostData = async (req, res) => {
       status:400,
       error:  e
     });
-    console.log(e);
+    // console.log(e);
   }
 }
 const Comment = require("../models/comment")
@@ -643,7 +643,7 @@ module.exports.userComment = async (req, res) => {
 
   try {
 
-    console.log(req.body);
+    // console.log(req.body);
     const userComment = new Comment({
       userId: req.params.id,
       comment: req.body.comment,
@@ -665,7 +665,7 @@ module.exports.getComment = async (req, res) => {
   try {
   var getComments = await Comment.find({ postId: req.params.id });
     var data = []
-    console.log(getComments);
+    // console.log(getComments);
     for (let index = 0; index < getComments.length; index++) {
       data = []
       data = await SignUp.findById({_id: getComments[index].userId})
@@ -676,7 +676,7 @@ module.exports.getComment = async (req, res) => {
 
     // const getComments = await Comment.find({ postId: req.params.id });
     await getComments.reverse();
-    console.log(getComments.length);
+    // console.log(getComments.length);
     res.send(getComments);
 
   } catch (e) {
@@ -686,9 +686,9 @@ module.exports.getComment = async (req, res) => {
 
 module.exports.likeUpdate=async (req,res)=>{
   // console.log(req.user._id);
-  const checkLike=await Post.find({_id:req.params.id},{like:req.user._id})
+  // const checkLike=await Post.find({_id:req.params.id},{like:req.user._id})
   // console.log(checkLike,"--------fffffffffffffhjhjhjhjhjhjhjhj");
-  console.log(req.user);
+  // console.log(req.user);
   const likesData=await Post.findByIdAndUpdate(req.params.id,{
  
     $push:{like:req.user._id}
@@ -763,7 +763,7 @@ catch(e){
  
 
 module.exports.getPostData = async (req, res) => {
-  console.log(req.params.id);
+  // console.log(req.params.id);
 
 
   try {
@@ -853,15 +853,19 @@ module.exports.google=async(req,res)=>{
       data:'error'
     })
   }
-
-
 ;}
 
 module.exports.storyGetAll=async(req,res)=>{
   try{
       const storyGet=await Story.find();
-      console.log(storyGet);
-      res.send(storyGet)
+      for (let index = 0; index < storyGet.length; index++) {
+        data = []
+        data = await SignUp.findById({_id: storyGet[index].userId})
+        storyGet[index].username = data.name;
+        storyGet[index].userProfile = data.profile;
+    }
+      // console.log(storyGet);
+      res.send(storyGet.reverse())
   }catch(e){
 
   }
@@ -869,3 +873,31 @@ module.exports.storyGetAll=async(req,res)=>{
 
 
 
+module.exports.followers=async(req,res)=>{
+
+  var data=  await SignUp.findByIdAndUpdate(req.body.followid ,{
+    $push:{followers:req.user._id}
+    },{new:true})
+    var data=  await SignUp.findByIdAndUpdate(req.user._id ,{
+      $push:{following:req.body.followid}
+      },{new:true})
+    res.status(200).send({
+    status:200,
+    data:data,
+    })
+}
+
+module.exports.unfollow=async(req,res)=>{
+
+  var data=  await SignUp.findByIdAndUpdate(req.body.unfollowid ,{
+    $pull:{followers:req.user._id}
+    },{new:true})
+    var data=  await SignUp.findByIdAndUpdate(req.user._id ,{
+      $pull:{following:req.body.unfollowid}
+      },{new:true})
+  res.status(200).send({
+  status:200,
+  data:data,
+})
+}
+// 63931962922e9c6fea8d40bf

@@ -36,6 +36,14 @@ const registerSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  followers: [{
+    type: String,
+    required: false,
+  }],
+  following: [{
+    type: String,
+    required: false,
+  }],
   tokens:[{
     token:{
         type:String, 

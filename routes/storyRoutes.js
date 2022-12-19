@@ -34,4 +34,4 @@ router.post("/storyUpload/:id", cpUpload_post, middleware, storyUpload.storyUplo
 router.get("/storyGet/:id", middleware, storyGet.storyGet);
 router.get("/storyGetAll",middleware,storyGetAll.storyGetAll)
 
-module.exports = router; 
+module.exports = router;  

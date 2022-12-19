@@ -37,6 +37,8 @@ router.get("/comment/:id",getComment.getComment);
 
 router.put("/like/:id",middleware,likeUpdate.likeUpdate) 
 router.put("/unLike/:id",middleware,unlikeUpdate.unlikeUpdate)
+
+
 module.exports = router;
 
 

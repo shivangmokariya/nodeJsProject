@@ -19,6 +19,10 @@ const profileRoutes=require("./routes/profileRoute")
 const postRoutes=require("./routes/postRoutes")
 const googleAuthRoute=require("./routes/googleAuthroute")
 const storyRoutes=require("./routes/storyRoutes")
+
+
+
+
 const session = require('express-session'); 
 
 // uses
@@ -37,7 +41,8 @@ app.use("/google",googleAuthRoute);
 app.use("/story",storyRoutes);
 
 
-// Server 
+
+// Server
 
 app.listen(process.env.PORT, () => {
   console.log(`server is running on ${process.env.PORT}`);

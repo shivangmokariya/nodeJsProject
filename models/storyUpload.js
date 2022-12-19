@@ -7,6 +7,12 @@ const storySchema=new mongoose.Schema({
   userId:{
     type:String
   },
+  username:{
+    type:String
+  },
+  userProfile:{
+    type:String
+  },
 })
 
 const Story=new mongoose.model("story",storySchema);
