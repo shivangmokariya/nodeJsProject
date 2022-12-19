@@ -13,6 +13,12 @@ const PostSchema=new mongoose.Schema({
     type:String,
     required:false,
   },
+  followers:[{
+    type:String
+  }],
+  following:[{
+    type:String
+  }],
   caption:{
     type:String
     
@@ -34,7 +40,6 @@ const PostSchema=new mongoose.Schema({
   like:[{
     type:String,
     unique:true,
-    
   }],
   comment:{
     type:String,
@@ -44,7 +49,9 @@ const PostSchema=new mongoose.Schema({
   },
   userId:{
     type:String
-  }
+  },
+  
+  
 })
 
 const Post=new mongoose.model("post",PostSchema);

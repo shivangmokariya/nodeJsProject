@@ -6,10 +6,12 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const multer=require("multer")
- 
+const cron=require('node-cron')
 const upload = multer({ dest: "uploads/" });
 app.use("/uploads", express.static("uploads"));
 app.use("/uploads", express.static("uploads"));
+app.use("*",cors());
+
 // Require 
 const SignupRoutes=require("./routes/signupRoutes")
 const loginRoutes=require("./routes/loginRoutes")
@@ -42,6 +44,43 @@ app.use("/story",storyRoutes);
 
 
 
+
+
+
+
+const http = require("http");
+const { Server } = require("socket.io");
+// const cors = require("cors");
+
+
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://192.168.29.141/:5100",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("join_room", (data) => {
+    socket.join(data);
+  });
+
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("receive_message", data);
+  });
+});
+
+
+
+
+
+
+
 // Server
 
 app.listen(process.env.PORT, () => {
@@ -49,4 +88,3 @@ app.listen(process.env.PORT, () => {
 })
 
 
-//  living with tanya ,lasic surgury

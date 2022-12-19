@@ -24,26 +24,26 @@ module.exports.registration = async (req, res) => {
     const useremail = await SignUp.findOne({ email: req.body.email });
     if (useremail) {
       res.send({
-        status:100,
-        message:"email already exists."
+        status: 100,
+        message: "email already exists."
       })
-    }else{
-    // console.log(req.body);
-    const user = new SignUp(req.body);
+    } else {
+      // console.log(req.body);
+      const user = new SignUp(req.body);
 
-    // console.log(req.body);
- 
-    const token = await user.generateAuthToken();
+      // console.log(req.body);
 
-    res.status(200).send({
-      message: "user reqisterd successfully",
-      status: 200,
-      data: user,
-      token: token
-    });
-    // console.log(user);
-    await user.save();
-  }
+      const token = await user.generateAuthToken();
+
+      res.status(200).send({
+        message: "user reqisterd successfully",
+        status: 200,
+        data: user,
+        token: token
+      });
+      // console.log(user);
+      await user.save();
+    }
 
   } catch (e) {
     // console.log('error', e);
@@ -142,11 +142,11 @@ module.exports.getProfileData = async (req, res) => {
   }
 };
 
-module.exports.getProfileDataById=async (req,res)=>{
-  try{
-const getProfile=await SignUp.findById(req.params.id)
-res.send(getProfile)
-  }catch(e){
+module.exports.getProfileDataById = async (req, res) => {
+  try {
+    const getProfile = await SignUp.findById(req.params.id)
+    res.send(getProfile)
+  } catch (e) {
     res.send("error - ", e)
   }
 }
@@ -174,40 +174,40 @@ module.exports.updatedData = async (req, res) => {
       // console.log("success!" + filePathMove)
     } else {
       var filePathMove = req.user.profile;
-      
+
     }
     // console.log(req._id);
-    const updatedData = await SignUp.findByIdAndUpdate({ _id: req._id, }, { 
+    const updatedData = await SignUp.findByIdAndUpdate({ _id: req._id, }, {
       $set: {
         name: req.body.name,
         phone_no: req.body.phone_no,
         bio: req.body.bio,
         profile: filePathMove
       }
-    },{new:true})
+    }, { new: true })
 
     // await userProfile.save();
     // console.log(req.body.name);
     var data = req.body
     data.files = filePathMove
-    if(!req.files.profile){
+    if (!req.files.profile) {
       res.status(200).send({
-        status:200,
+        status: 200,
         message: "Profile pic not saved.",
         data: updatedData
       })
-    }else{
-    res.status(200).send({
-      status:200,
-      message: "Profile saved successfully.",
-      data: updatedData
-    })
-  }
+    } else {
+      res.status(200).send({
+        status: 200,
+        message: "Profile saved successfully.",
+        data: updatedData
+      })
+    }
     // res.send({message: "File Saved",files: filePathMove});
 
   } catch (e) {
     // console.log(e);
-    res.status(400).send({ status:200,message: "data not saved correctly--", e: e });
+    res.status(400).send({ status: 200, message: "data not saved correctly--", e: e });
   }
 }
 // ---------------------------------------------------------
@@ -595,6 +595,7 @@ module.exports.userPostData = async (req, res) => {
 
 
 
+
     //     console.log(req.files.profile[0].path);
     //     console.log(req.files.profilePic[0].path);
     // console.log(filePathMove2);
@@ -620,17 +621,17 @@ module.exports.userPostData = async (req, res) => {
       userPost: filePathMove,
       userId: req.params.id,
 
-    }); 
-    await userPost.save(); 
+    });
+    await userPost.save();
 
     res.status(200).send({
-      status:200,
-      userPost:userPost,
+      status: 200,
+      userPost: userPost,
     });
   } catch (e) {
     res.status(400).send({
-      status:400,
-      error:  e
+      status: 400,
+      error: e
     });
     // console.log(e);
   }
@@ -653,7 +654,7 @@ module.exports.userComment = async (req, res) => {
       // username:profilePic.name,
 
     })
-    
+
     await userComment.save();
     res.send(userComment)
   } catch (e) {
@@ -663,17 +664,16 @@ module.exports.userComment = async (req, res) => {
 
 module.exports.getComment = async (req, res) => {
   try {
-  var getComments = await Comment.find({ postId: req.params.id });
+    var getComments = await Comment.find({ postId: req.params.id });
     var data = []
     // console.log(getComments);
     for (let index = 0; index < getComments.length; index++) {
       data = []
-      data = await SignUp.findById({_id: getComments[index].userId})
+      data = await SignUp.findById({ _id: getComments[index].userId })
       getComments[index].username = data.name;
       getComments[index].userProfile = data.profile;
       // console.log("yughdfu",data.profile);
-  }
-
+    }
     // const getComments = await Comment.find({ postId: req.params.id });
     await getComments.reverse();
     // console.log(getComments.length);
@@ -681,111 +681,130 @@ module.exports.getComment = async (req, res) => {
 
   } catch (e) {
 
-  } 
+  }
 }
 
-module.exports.likeUpdate=async (req,res)=>{
+module.exports.likeUpdate = async (req, res) => {
   // console.log(req.user._id);
   // const checkLike=await Post.find({_id:req.params.id},{like:req.user._id})
   // console.log(checkLike,"--------fffffffffffffhjhjhjhjhjhjhjhj");
   // console.log(req.user);
-  const likesData=await Post.findByIdAndUpdate(req.params.id,{
- 
-    $push:{like:req.user._id}
-  },{
-    new:true
-  })
-    if(!likesData){ 
-      return res.status(400).json({error:"err"})
-    }else{ 
-      res.status(200).json(likesData);
-    }
+  const likesData = await Post.findByIdAndUpdate(req.params.id, {
 
-}
-module.exports.unlikeUpdate=async (req,res)=>{
- const likesData= await Post.findByIdAndUpdate(req.params.id,{
-    $pull:{like:req.user._id}
-  },{
-    new:true
+    $push: { like: req.user._id }
+  }, {
+    new: true
   })
-    if(!likesData){
-      return res.status(400).json({error:"error"})
-    }else{
-      res.status(200).json(likesData);
-    }
-}
-
-module.exports.deletePost=async (req,res)=>{
-  try{
-    const deletedData=await Post.deleteOne({_id:req.params.id})
-    res.send(deletedData);
-  }catch(e){
-res.send(e,"error")
+  if (!likesData) {
+    return res.status(400).json({ error: "err" })
+  } else {
+    res.status(200).json(likesData);
   }
 
 }
+module.exports.unlikeUpdate = async (req, res) => {
+  const likesData = await Post.findByIdAndUpdate(req.params.id, {
+    $pull: { like: req.user._id }
+  }, {
+    new: true
+  })
+  if (!likesData) {
+    return res.status(400).json({ error: "error" })
+  } else {
+    res.status(200).json(likesData);
+  }
+}
+
+module.exports.deletePost = async (req, res) => {
+  try {
+    const deletedData = await Post.deleteOne({ _id: req.params.id })
+    res.send(deletedData);
+  } catch (e) {
+    res.send(e, "error")
+  }
+}
 
 
-module.exports.getPostDataAll=async(req,res)=>{
-  try{
+module.exports.getPostDataAll = async (req, res) => {
+  try {
     // console.log("booooooooo,");
     // const userDetails= await SignUp.find();
     var postData = await Post.find();
     var data = []
     var comment = []
-// console.log(userDetails);
-try{
-for (let index = 0; index < postData.length; index++) {
-    data = []
-    data = await SignUp.findById({_id: postData[index].userId})
-    comment = await Comment.find({postId: postData[index]._id})
-    postData[index].username = data.name;
-    postData[index].userProfile = data.profile;
-    postData[index].userBio = data.bio;
-    postData[index].comment = comment.length;
-}
+    // console.log(userDetails);
+    try {
+      for (let index = 0; index < postData.length; index++) {
+        data = []
+        data = await SignUp.findById({ _id: postData[index].userId })
+        comment = await Comment.find({ postId: postData[index]._id })
+        postData[index].username = data.name;
+        postData[index].userProfile = data.profile;
+        postData[index].userBio = data.bio;
+        postData[index].following = data.following;
+        postData[index].followers = data.followers;
+        // console.log(data.followers);
+        postData[index].comment = comment.length;
+      }
 
-const response = await res.send({
-  postData:postData.reverse(),
-})
-}
-catch(e){
-  res.send({
-    error:e,
-  })
-}
-    
-  }catch(e){
-    
+      const response = await res.send({
+        postData: postData.reverse(),
+      })
+    }
+    catch (e) {
+      res.send({
+        error: e,
+      })
+    }
+
+  } catch (e) {
+
   }
 }
 
- 
+
 
 module.exports.getPostData = async (req, res) => {
   // console.log(req.params.id);
 
 
   try {
-    const userDetails= await SignUp.findOne({_id: req.params.id});
+
+    const userDetails = await SignUp.findOne({ _id: req.params.id });
     const postData = await Post.find({ userId: req.params.id });
-    console.log(userDetails.profile);
+    // console.log(userDetails.profile);
+
+
+    for (let index = 0; index < postData.length; index++) {
+      data = []
+      data = await SignUp.findById({ _id: postData[index].userId })
+      postData[index].following = data.following;
+      postData[index].followers = data.followers;
+      // console.log(data.followers);
+    }
+
+
+
+
     res.send({
-      status:200,
-      postData:postData,
-      userProfilePic:userDetails.profile,
+      status: 200,
+      postData: postData,
+      userProfilePic: userDetails.profile,
     })
   } catch (e) {
     res.send(e);
   }
 }
-
-
+// const cron=require("cron");
+const cron = require('node-cron')
+var time = Date.now()
 module.exports.storyUpload = async (req, res) => {
+  // console.log(cron);
+
   try {
-    console.log(req.body);
-    console.log(req.params.id, "-----------------.id");
-    console.log(req.files);
+    // console.log(req.body);
+    // console.log(req.params.id, "-----------------.id"); 
+    // console.log(req.files);
     if (req.files.story) {
       // console.log(req.files);
       let oldName = "uploads/" + req.files.story[0].filename;
@@ -797,6 +816,7 @@ module.exports.storyUpload = async (req, res) => {
     } else {
       var filePathMove = req.user.story;
     }
+
     // console.log(filePathMove,"======================");
     const story = new Story({
       story: filePathMove,
@@ -809,95 +829,163 @@ module.exports.storyUpload = async (req, res) => {
     });
   } catch (e) {
     res.send({
-      status:400,
-      data:"enter correct data"
+      status: 400,
+      data: "enter correct data"
     })
   }
 }
 
 
-module.exports.storyGet=async(req,res)=>{
-try{
-  const getData=await Story.find({userId:req.params.id})
-  const userData=await SignUp.find({_id:req.params.id})
-  // console.log(getData);
-  console.log(userData);
-  res.send({
-    status:200,
-    data:getData,
-    userProfilePic:userData[0].profile,
-    username:userData[0].name,
-  })
-}catch(e){
 
+cron.schedule('* * * * * *', async () => {
+
+
+
+    try {
+      const checkStory = await Story.find()
+
+
+      for (let index = 0; index < checkStory.length; index++) {
+        const element = checkStory[index];
+        // console.log(element.time);
+        const DiffTime = Date.now() - parseInt(element.time);
+        // console.log(DiffTime<=86400000);
+        const over24H = DiffTime >= 86400000
+        // console.log("DiffTime",DiffTime);
+        // console.log(over24H, 86400000);
+        if (over24H) {
+          const DeleteStory = await Story.deleteOne({ id: element._id })
+          // res.status(200).send({ status: 200, message: "story is deleted because of it was more then 24 hours" })
+        }
+      }
+    } catch (e) {
+      // res.send({ error: e })
+    }
+ 
+
+
+
+})
+
+
+
+module.exports.storyAutoDelete = async (req, res) => {
+
+  try {
+    const checkStory = await Story.find()
+
+
+    for (let index = 0; index < checkStory.length; index++) {
+      const element = checkStory[index];
+      // console.log(element.time);
+      const DiffTime = Date.now() - parseInt(element.time);
+      // console.log(DiffTime<=86400000);
+      const over24H = DiffTime >= 86400000
+      // console.log("DiffTime",DiffTime);
+      // console.log(over24H,86400000);
+
+      if (over24H) {
+        const DeleteStory = await Story.deleteOne({ id: element._id })
+        res.status(200).send({ status: 200, message: "story is deleted because of it was more then 24 hours" })
+      }
+
+    }
+
+  } catch (e) {
+    res.send({ error: e })
+  }
 }
+
+// 86400000
+// console.log(parseInt(Date.now()));
+// console.log(Date.now() - parseInt(element.time));
+// console.log(parseInt(element.time));
+module.exports.storyGet = async (req, res) => {
+
+  try {
+    const getData = await Story.find({ userId: req.params.id })
+    const userData = await SignUp.find({ _id: req.params.id })
+    // console.log(getData);
+    console.log(userData);
+    res.send({
+      status: 200,
+      data: getData,
+      userProfilePic: userData[0].profile,
+      username: userData[0].name,
+    })
+  } catch (e) {
+
+  }
 }
 
-const Google=require("../models/google");
+
+const Google = require("../models/google");
 
 
-module.exports.google=async(req,res)=>{
-  try{
-    const token=req.body.token;
-    const google=new Google({
-      token:token,
+module.exports.google = async (req, res) => {
+  try {
+    const token = req.body.token;
+    const google = new Google({
+      token: token,
     });
     await google.save()
     res.status(200).send({
-      status:200,
-      data:'error'
+      status: 200,
+      data: 'error'
     })
-  }catch(e){
+  } catch (e) {
     res.status(400).send({
-      status:400,
-      data:'error'
+      status: 400,
+      data: 'error'
     })
   }
-;}
+  ;
+}
 
-module.exports.storyGetAll=async(req,res)=>{
-  try{
-      const storyGet=await Story.find();
-      for (let index = 0; index < storyGet.length; index++) {
-        data = []
-        data = await SignUp.findById({_id: storyGet[index].userId})
-        storyGet[index].username = data.name;
-        storyGet[index].userProfile = data.profile;
+module.exports.storyGetAll = async (req, res) => {
+  try {
+    const storyGet = await Story.find();
+    for (let index = 0; index < storyGet.length; index++) {
+      data = []
+      data = await SignUp.findById({ _id: storyGet[index].userId })
+      storyGet[index].username = data.name;
+      storyGet[index].userProfile = data.profile;
     }
-      // console.log(storyGet);
-      res.send(storyGet.reverse())
-  }catch(e){
+    // console.log(storyGet);
+    res.send(storyGet.reverse())
+  } catch (e) {
 
   }
 }
 
+module.exports.followers = async (req, res) => {
 
-
-module.exports.followers=async(req,res)=>{
-
-  var data=  await SignUp.findByIdAndUpdate(req.body.followid ,{
-    $push:{followers:req.user._id}
-    },{new:true})
-    var data=  await SignUp.findByIdAndUpdate(req.user._id ,{
-      $push:{following:req.body.followid}
-      },{new:true})
-    res.status(200).send({
-    status:200,
-    data:data,
-    })
+  var data = await SignUp.findByIdAndUpdate(req.body.followid, {
+    $push: { followers: req.user._id }
+  }, { new: true })
+  var data = await SignUp.findByIdAndUpdate(req.user._id, {
+    $push: { following: req.body.followid }
+  }, { new: true })
+  res.status(200).send({
+    status: 200,
+    data: data,
+  })
 }
 
-module.exports.unfollow=async(req,res)=>{
+module.exports.unfollow = async (req, res) => {
 
-  var data=  await SignUp.findByIdAndUpdate(req.body.unfollowid ,{
-    $pull:{followers:req.user._id}
-    },{new:true})
-    var data=  await SignUp.findByIdAndUpdate(req.user._id ,{
-      $pull:{following:req.body.unfollowid}
-      },{new:true})
+  var data = await SignUp.findByIdAndUpdate(req.body.unfollowid, {
+    $pull: { followers: req.user._id }
+  }, { new: true })
+  var data = await SignUp.findByIdAndUpdate(req.user._id, {
+    $pull: { following: req.body.unfollowid }
+  }, { new: true })
   res.status(200).send({
-  status:200,
-  data:data,
-})
+    status: 200,
+    data: data,
+  })
 }
 // 63931962922e9c6fea8d40bf
+
+
+// dear chsdomer your icicic bank surat money  card 6707838 xxxxx, 

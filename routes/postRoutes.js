@@ -25,7 +25,7 @@ const unlikeUpdate=require("../controllers/userController")
 
 const upload = multer({ dest: "uploads/" });
 app.use("/uploads", express.static("uploads"));
-var cpUpload_post = upload.fields([{ name: "profile", maxCount: 3 }, { name: "profilePic", maxCount: 1 }]);
+var cpUpload_post = upload.fields([{ name: "profile", maxCount: 5 }, { name: "profilePic", maxCount: 5 }]);
 
 router.post("/:id",cpUpload_post,middleware,userPostData.userPostData);
 router.get("/getPostData/:id",cpUpload_post,middleware,getPostData.getPostData);
@@ -35,7 +35,7 @@ router.delete("/deletePost/:id",middleware,deletePost.deletePost);
 router.post("/comment/:id",userComment.userComment);
 router.get("/comment/:id",getComment.getComment);
 
-router.put("/like/:id",middleware,likeUpdate.likeUpdate) 
+router.put("/like/:id",middleware,likeUpdate.likeUpdate)
 router.put("/unLike/:id",middleware,unlikeUpdate.unlikeUpdate)
 
 

@@ -10,7 +10,8 @@ const nodemailer=require("nodemailer");
 const router=express.Router();
 const middelware=require("../middleware/middleware")
 
-const registration=require("../controllers/userController")
+let registration;
+registration = require("../controllers/userController");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -26,8 +27,8 @@ router.post("/",registration.registration);
 
 router.get("/", getRegisterData.getRegisterData);
 
-router.post("/followers",middelware,followers.followers)
-router.post("/unfollow",middelware,unfollow.unfollow)
+router.put("/followers",middelware,followers.followers)
+router.put("/unfollow",middelware,unfollow.unfollow)
 
 
 module.exports=router;
