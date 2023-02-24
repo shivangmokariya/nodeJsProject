@@ -5,4 +5,4 @@ console.log(process.env)
 mongoose
 .connect(process.env.MONGO_URI)
 .then(()=>console.log("Database connection succesfull"))
-.catch((e)=>console.log("no connection in Database"))
+.catch((e)=>console.log("no connection in Database"+e))
