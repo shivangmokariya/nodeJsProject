@@ -985,7 +985,4 @@ module.exports.unfollow = async (req, res) => {
     data: data,
   })
 }
-// 63931962922e9c6fea8d40bf
 
-
-// dear chsdomer your icicic bank surat money  card 6707838 xxxxx, 
