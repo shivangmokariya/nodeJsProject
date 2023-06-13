@@ -332,8 +332,8 @@ module.exports.otpSend = async (req, res) => {
       service: 'gmail',
       secure: false,
       auth: {
-        user: 'vedantrakholiya@gmail.com',
-        pass: 'jauwbrpvouchznds'
+        user: process.env.user,
+        pass: process.env.pass
       }
     });
 
